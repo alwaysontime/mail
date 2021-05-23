@@ -23,7 +23,6 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 
   // Variables to collect form data
-  const submit = document.querySelector('#submit');
   const compose_recipients = document.querySelector('#compose-recipients');
   const compose_subject = document.querySelector('#compose-subject');
   const compose_body = document.querySelector('#compose-body');
@@ -201,29 +200,33 @@ function load_email(email_id, mailbox) {
   
 }
 
-// ! Here...
-
 function reply_email(email) {
-
+  
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#email-viewer').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
-
-  // Variables to populate form
-  const compose_recipients = email.sender;
-  const compose_subject = `RE: ${email.subject}`;
-  const compose_body = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
   
-  console.log(compose_recipients);
-  console.log(compose_subject);
-  console.log(compose_body);
-
+  if (email.sender) {
+    document.querySelector('#compose-recipients').value = email.sender
+  }
+  
+  if (email.subject) {
+    const regex = new RegExp('RE:*')
+    if (regex.test(email.subject))
+      document.querySelector('#compose-subject').value = `${email.subject}`
+    else
+      document.querySelector('#compose-subject').value = `RE: ${email.subject}`
+  }
+  
+  if (email.body) {
+    document.querySelector('#compose-body').value = '\n\n' + `On ${email.timestamp} ${email.sender} wrote: ` + '\n' + `"${email.body}"`;
+  }
+  
   // Variables to collect form data
-  // const submit = document.querySelector('#submit');
-  // const compose_recipients = document.querySelector('#compose-recipients');
-  // const compose_subject = document.querySelector('#compose-subject');
-  // const compose_body = document.querySelector('#compose-body');
+  const compose_recipients = document.querySelector('#compose-recipients');
+  const compose_subject = document.querySelector('#compose-subject');
+  const compose_body = document.querySelector('#compose-body');
   
   // Listen for submission of form
   document.querySelector('form').onsubmit = () => {
